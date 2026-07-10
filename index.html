@@ -75,6 +75,9 @@
   /* CONTACT */
   .contact-info{max-width:520px;margin:0 auto;text-align:center}
   .contact-info p{color:var(--muted);margin-bottom:22px}
+  .svc-label{display:block;font-size:.9rem;color:var(--muted);margin-bottom:8px}
+  .contact-info select{width:100%;max-width:360px;margin:0 auto 20px;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:var(--bg);color:var(--text);font-family:inherit;font-size:.95rem;cursor:pointer}
+  .contact-info select:focus{outline:none;border-color:var(--accent)}
   .contact-links{display:flex;flex-direction:column;gap:14px}
   .contact-links a{display:flex;align-items:center;gap:12px;background:var(--card);padding:14px 18px;border-radius:12px;border:1px solid rgba(255,255,255,.06);color:var(--text);transition:border-color .2s}
   .contact-links a:hover{border-color:var(--accent)}
@@ -203,6 +206,11 @@
         <h3>Consultoría en Sistemas</h3>
         <p>Te asesoro para elegir, implementar y optimizar la tecnología correcta según el tamaño y presupuesto de tu negocio.</p>
       </div>
+      <div class="card">
+        <div class="icon">📄</div>
+        <h3>Trámites</h3>
+        <p>Gestión de trámites digitales y en línea: formularios, registros, plataformas y papeleo que te quita tiempo. Yo lo resuelvo por ti.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -238,6 +246,16 @@
     <p class="section-sub">Respondo en menos de <strong>24 horas hábiles</strong>. Si tu solicitud es urgente, márcala en el formulario y te atiendo con prioridad.</p>
     <div class="contact-info">
       <p>¿Tienes una idea, un problema técnico o quieres aprovechar mejor tus datos? Escríbeme por el medio que prefieras y te digo cómo puedo ayudarte, sin compromiso.</p>
+      <label for="servicio" class="svc-label">¿Qué servicio te interesa? (opcional)</label>
+      <select id="servicio">
+        <option value="">— Selecciona un servicio —</option>
+        <option value="Inteligencia Artificial">🤖 Inteligencia Artificial</option>
+        <option value="Análisis de datos">📊 Análisis de datos</option>
+        <option value="Desarrollo de software">💻 Software a la medida</option>
+        <option value="Soporte técnico">🛠️ Soporte técnico</option>
+        <option value="Consultoría en sistemas">🧭 Consultoría</option>
+        <option value="Trámites">📄 Trámites</option>
+      </select>
       <label class="check-urgente"><input id="urgente" type="checkbox"> 🚨 Marca aquí si tu solicitud es urgente</label>
       <div class="contact-links">
         <a id="link-wa" href="https://wa.me/50233583414" target="_blank">💬 WhatsApp</a>
@@ -249,7 +267,7 @@
 </section>
 
 <footer>
-  <div class="container">© 2026 JuancaDev · Hecho con 💙</div>
+  <div class="container">© 2026 JuancaDev</div>
 </footer>
 
 <!-- JuancaBot -->
@@ -281,30 +299,34 @@
     var EMAIL = "juancadevgt@gmail.com";
 
     // Mensaje / asunto base (cuando NO es urgente)
-    var waBase   = "Hola Juan, me interesa cotizar un sistema.";
+    var waBase   = "Hola Juan, vengo de tu página web.";
     var mailSubj = "Contacto desde tu página web";
-    var mailBody = "Hola Juan, me interesa contactarte.";
+    var mailBody = "Hola Juan, vengo de tu página web.";
 
-    var urgente  = document.getElementById("urgente");
-    var linkWa   = document.getElementById("link-wa");
-    var linkMail = document.getElementById("link-mail");
+    var urgente   = document.getElementById("urgente");
+    var servicio  = document.getElementById("servicio");
+    var linkWa    = document.getElementById("link-wa");
+    var linkMail  = document.getElementById("link-mail");
 
     function actualizar(){
       var esUrgente = urgente.checked;
       var prefijo   = esUrgente ? "URGENTE - " : "";
+      // Servicio elegido en la lista desplegable (si hay)
+      var svc       = servicio.value ? " Me interesa: " + servicio.value + "." : "";
 
-      // WhatsApp: prefija URGENTE al inicio del mensaje
-      var textoWa = encodeURIComponent(prefijo + waBase);
-      var urlWa   = "https://wa.me/" + WA_NUMBER + "?text=" + textoWa;
-      linkWa.href = urlWa;
+      // WhatsApp: prefija URGENTE y adjunta el servicio elegido
+      var textoWa = prefijo + waBase + svc;
+      linkWa.href = "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(textoWa);
 
-      // Correo: asunto automático; si es urgente empieza con URGENTE
+      // Correo: asunto con URGENTE si aplica y servicio en el cuerpo
+      var asunto = prefijo + mailSubj + (servicio.value ? " - " + servicio.value : "");
       linkMail.href = "mailto:" + EMAIL +
-        "?subject=" + encodeURIComponent(prefijo + mailSubj) +
-        "&body="    + encodeURIComponent(prefijo + mailBody);
+        "?subject=" + encodeURIComponent(asunto) +
+        "&body="    + encodeURIComponent(prefijo + mailBody + svc);
     }
 
     urgente.addEventListener("change", actualizar);
+    servicio.addEventListener("change", actualizar);
     actualizar();
   })();
 
@@ -320,7 +342,7 @@
     var input    = document.getElementById("botText");
     var badge    = document.getElementById("botBadge");
     var started  = false;
-    var lead     = { need:null, urgent:false };
+    var lead     = { need:null, urgent:false, problem:null };
 
     function scrollDown(){ body.scrollTop = body.scrollHeight; }
 
@@ -385,6 +407,7 @@
           {label:"📊 Análisis de datos",        action:function(){ pickNeed("Análisis de datos"); }},
           {label:"💻 Software a la medida",     action:function(){ pickNeed("Desarrollo de software"); }},
           {label:"🛠️ Soporte técnico",         action:function(){ pickNeed("Soporte técnico"); }},
+          {label:"📄 Trámites",                 action:function(){ pickNeed("Trámites"); }},
           {label:"🧭 Consultoría / Otro",       action:function(){ pickNeed("Consultoría en sistemas"); }}
         ]);
       });
@@ -417,6 +440,7 @@
       if (lead.urgent) partes.push("URGENTE -");
       partes.push("Hola Juan, vengo de tu página web.");
       if (lead.need) partes.push("Me interesa: " + lead.need + ".");
+      if (lead.problem) partes.push('Mi caso: "' + lead.problem + '".');
       return "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(partes.join(" "));
     }
 
@@ -425,7 +449,8 @@
       "Inteligencia Artificial": "🤖",
       "Análisis de datos":       "📊",
       "Desarrollo de software":  "💻",
-      "Consultoría en sistemas": "🧭"
+      "Consultoría en sistemas": "🧭",
+      "Trámites":                "📄"
     };
 
     // Detecta el servicio adecuado según lo que describe el usuario
@@ -436,6 +461,8 @@
       if (/(chatbot|\bbot\b|inteligencia artificial|\bia\b|chatgpt|claude|automatiz|predict|machine learning|modelo de|asistente virtual)/.test(t)) return "Inteligencia Artificial";
       // 📊 Análisis de datos
       if (/(dashboard|tablero|reporte|reportes|gr[aá]fic|estad[ií]stic|visualiz|\bkpi\b|indicador|base de datos|analizar (mis )?datos|an[aá]lisis de datos|power bi|m[eé]tricas)/.test(t)) return "Análisis de datos";
+      // 📄 Trámites
+      if (/(tr[aá]mite|papeleo|licencia|permiso|certificad|renovar|renovaci[oó]n|pasaporte|\bdpi\b|\bsat\b|migraci[oó]n|notar[ií]a|legaliz|antecedentes|constancia|solvencia|inscrib|inscripci[oó]n)/.test(t)) return "Trámites";
       // 💻 Desarrollo de software
       if (/(sistema|software|aplicaci[oó]n|\bapp\b|p[aá]gina|sitio web|\bweb\b|inventario|gesti[oó]n|programa|plataforma|ecommerce|tienda en l[ií]nea|\bcrm\b|factura|punto de venta|desarroll|cotizador|agenda|reservas)/.test(t)) return "Desarrollo de software";
       // 🧭 Consultoría
@@ -462,7 +489,7 @@
       if (/(proceso|cómo trabaj|como trabaj|pasos|garant)/.test(t))                                 { botSay(respuestas.proceso, menuChips); return; }
       if (/(whatsapp|contactar|hablar con juan|llamar|correo|email|escribir a juan)/.test(t))       { startContacto(); return; }
       var svc = detectService(t);
-      if (svc) { suggestService(svc); return; }
+      if (svc) { lead.problem = txt; suggestService(svc); return; }
       botSay("Mmm, no estoy 100% seguro de qué servicio encaja con eso 🤔. Lo mejor es que lo hables directo con Juan. Mientras, elige una opción 👇", menuChips);
     }
 
@@ -480,6 +507,7 @@
     }
 
     launcher.addEventListener("click", function(){ toggle(!panel.classList.contains("open")); });
+    launcher.addEventListener("mouseenter", function(){ toggle(true); });
     closeBtn.addEventListener("click", function(){ toggle(false); });
     form.addEventListener("submit", function(e){
       e.preventDefault();
