@@ -295,13 +295,13 @@
 
 <script>
   // ===== Sistema de referidos =====
-  // Captura ?ref=CODIGO de la URL y lo guarda para adjuntarlo a cada
-  // contacto (WhatsApp, correo y chatbot). Persiste aunque recarguen.
+  // Lee ?ref=CODIGO de la URL actual para adjuntarlo a cada contacto
+  // (WhatsApp, correo y chatbot). Solo cuenta si la persona entra por un
+  // link de referido; con el link limpio no hay referido.
   window.JC_REF = (function(){
     try {
       var p = new URLSearchParams(location.search).get("ref");
-      if (p) localStorage.setItem("jc_ref", p.replace(/[^\wáéíóúñ\- ]/gi, "").slice(0, 40).trim());
-      return localStorage.getItem("jc_ref") || "";
+      return p ? p.replace(/[^\wáéíóúñ\- ]/gi, "").slice(0, 40).trim() : "";
     } catch (e) { return ""; }
   })();
 
