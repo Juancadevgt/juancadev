@@ -507,7 +507,12 @@
     }
 
     launcher.addEventListener("click", function(){ toggle(!panel.classList.contains("open")); });
-    launcher.addEventListener("mouseenter", function(){ toggle(true); });
+    // Abrir con hover SOLO en dispositivos con mouse real (escritorio).
+    // En celular/tablet se usa únicamente el toque, para que abra a la primera.
+    var puedeHover = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    if (puedeHover) {
+      launcher.addEventListener("mouseenter", function(){ toggle(true); });
+    }
     closeBtn.addEventListener("click", function(){ toggle(false); });
     form.addEventListener("submit", function(e){
       e.preventDefault();
