@@ -6,7 +6,7 @@ software, análisis de datos, soporte técnico y consultoría TI.
 
 ## 🌐 En vivo
 
-- **Sitio:** https://juanca.ia.vercel.app
+- **Sitio:** https://juancadev.vercel.app
 
 ## 🛠️ Tecnología
 
